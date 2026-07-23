@@ -6,16 +6,23 @@ class MoviesController < ApplicationController
     @all_ratings = Movie.all_ratings
     if params[:ratings].present?
       @ratings_to_show = params[:ratings].keys
+      session[:ratings] = @ratings_to_show
+    elsif session[:ratings].present?
+      @ratings_to_show = session[:ratings]
     else
-      @ratings_to_show = Movie.all_ratings
+      @ratings_to_show = @all_ratings
     end
 
-    @sort_by = params[:sort_by]
+    if params[:sort_by].present?
+      @sort_by = params[:sort_by]
+      session[:sort_by] = @sort_by
+    elsif session[:sort_by].present?
+      @sort_by = session[:sort_by]
+    end
+
     @movies = Movie.with_ratings(@ratings_to_show)
-    if @sort_by.present?
-      @movies = @movies.order(@sort_by)
-    end
-
+    @movies = @movies.order(@sort_by) if @sort_by.present?
+    
   end
 
   # GET /movies/1 or /movies/1.json
